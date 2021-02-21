@@ -32,19 +32,19 @@ class Icons {
         categories.add(new Categories.fromJson(v));
       });
     }
-    //print("Icons 1");
+    print("Icons 1");
     tags = json['tags'].cast<String>();
     type = json['type'];
     isIconGlyph = json['is_icon_glyph'];
     publishedAt = json['published_at'];
-    //print("Icons 2");
+    print("Icons 2");
     if (json['containers'] != null) {
       containers = new List<Containers>();
       json['containers'].forEach((v) {
         containers.add(new Containers.fromJson(v));
       });
     }
-    //print("Icons 4");
+    print("Icons 4");
     isPremium = json['is_premium'];
     if (json['vector_sizes'] != null) {
       vectorSizes = new List<VectorSizes>();
@@ -52,14 +52,14 @@ class Icons {
         vectorSizes.add(new VectorSizes.fromJson(v));
       });
     }
-    //print("Icons 5");
+    print("Icons 5");
     if (json['raster_sizes'] != null) {
       rasterSizes = new List<RasterSizes>();
       json['raster_sizes'].forEach((v) {
         rasterSizes.add(new RasterSizes.fromJson(v));
       });
     }
-    //print("Icons 6");
+    print("Icons 6");
   }
 }
 

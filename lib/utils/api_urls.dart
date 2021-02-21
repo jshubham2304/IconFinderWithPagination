@@ -6,4 +6,5 @@ abstract class ApiUrls {
   static final String count10 = "?count=10";
   static final String iconEndPoint = "/iconsets";
   static final String iconMainEndPoint = "/icons";
+  static final String searchIconPoint = "/icons/search?query=";
 }

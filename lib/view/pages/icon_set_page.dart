@@ -106,7 +106,8 @@ class _IconSetScreenState extends State<IconSetScreen> {
           } else {
             return uiCategory.Category(
               imageUrl: 'https://picsum.photos/200',
-              name: repo.iconsetsList[index].name,
+              name: repo.iconsetsList[index].name +
+                  repo.iconsetsList[index].icons?.length.toString(),
               onclick: () {},
             );
           }

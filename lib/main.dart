@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconfinder/view/pages/home_screen.dart';
 import 'package:iconfinder/view_model/category_respository.dart';
 import 'package:iconfinder/view_model/icon_set_repository.dart';
+import 'package:iconfinder/view_model/search_repository.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -19,6 +20,11 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<IconSetRepository>(
             create: (_) => IconSetRepository(),
+            lazy: false,
+          ),
+          ChangeNotifierProvider<SearchRepo>(
+            create: (_) => SearchRepo(),
+            lazy: false,
           ),
         ],
         child: MaterialApp(
@@ -28,9 +34,9 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: Consumer2<CatgeoryRepo, IconSetRepository>(
-            builder:
-                (context, CatgeoryRepo repo, IconSetRepository repository, _) {
+          home: Consumer3<CatgeoryRepo, IconSetRepository, SearchRepo>(
+            builder: (context, CatgeoryRepo repo, IconSetRepository repository,
+                SearchRepo serachRepo, _) {
               return HomeScreen();
             },
           ),

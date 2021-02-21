@@ -21,8 +21,7 @@ class Category extends StatelessWidget {
             image: DecorationImage(
                 image: NetworkImage(imageUrl),
                 fit: BoxFit.fill,
-                colorFilter:
-                    ColorFilter.mode(Colors.black45, BlendMode.colorBurn)),
+                colorFilter: ColorFilter.mode(Colors.black45, BlendMode.hue)),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Center(
