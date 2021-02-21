@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:iconfinder/api/api_service.dart';
 import 'package:iconfinder/model/icon.dart';
 import 'package:iconfinder/view_model/icon_set_repository.dart';
@@ -8,12 +9,12 @@ class SearchRepo extends ChangeNotifier {
   IconStatus status = IconStatus.IconProcessing;
   int nextpage = 0;
   String searchValue;
+  String message = '';
   searchingIcon(String val) {
     try {
       if (val == null || val.length == 0) {
         icons.clear();
         searchValue = val;
-        return;
       } else {
         searchValue = val;
         status = IconStatus.IconProcessing;
@@ -34,6 +35,20 @@ class SearchRepo extends ChangeNotifier {
       status = IconStatus.IconError;
       notifyListeners();
     }
+  }
+
+  downloadIcon(String url, String name) async {
+    message = 'Downloading Icons';
+    notifyListeners();
+
+    GallerySaver.saveImage(url).then((bool success) {
+      if (success) {
+        message = 'Icon Saved'; ////
+      } else {
+        message = 'Icon is not saved';
+      }
+      notifyListeners();
+    });
   }
 
   getNextPageSearchingIcon() {
@@ -63,4 +78,13 @@ class SearchRepo extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // requestPermission() async {
+  //   Map<Permission, PermissionStatus> statuses = await [
+  //     Permission.storage,
+  //   ].request();
+
+  //   final info = statuses[Permission.storage].toString();
+  //   print(info);
+  // }
 }

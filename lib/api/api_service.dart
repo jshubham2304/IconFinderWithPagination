@@ -88,7 +88,7 @@ abstract class ApiService {
       print(
           '${ApiUrls.baseUrls + ApiUrls.searchIconPoint + key.trim() + "&count=10"}${nextpage != 0 ? "&offset=" + nextpage.toString() : ''}');
       final response = await http.get(
-          '${ApiUrls.baseUrls + ApiUrls.searchIconPoint + key + "&count=10"}${nextpage != 0 ? "&offset=" + nextpage.toString() : ''}'
+          '${ApiUrls.baseUrls + ApiUrls.searchIconPoint + key + "&count=20"}${nextpage != 0 ? "&offset=" + nextpage.toString() : ''}'
               .trim(),
           headers: header);
       print(response.body);
