@@ -14,12 +14,13 @@ abstract class ApiService {
     dynamic responseJson;
     try {
       final response = await http.get(
-          '${ApiUrls.baseUrls + ApiUrls.categoryEndPoint}${lastCategory != null ? ApiUrls.afterStringPoint + lastCategory.identifier : ''}'
+          '${ApiUrls.baseUrls + ApiUrls.categoryEndPoint + ApiUrls.count10}${lastCategory != null ? ApiUrls.afterStringPoint + lastCategory.identifier : ''}'
               .trim(),
           headers: {
             'Authorization':
                 'Bearer X0vjEUN6KRlxbp2DoUkyHeM0VOmxY91rA6BbU5j3Xu6wDodwS0McmilLPBWDUcJ1'
           });
+      print(response.body);
       responseJson = ResponseHandler.returnResponse(response);
     } on SocketException {
       throw FetchDataException('No Internet Connection');
