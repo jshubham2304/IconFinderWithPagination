@@ -1,4 +1,4 @@
-class Icons {
+class IconModel {
   List<Prices> prices;
   int iconId;
   List<Categories> categories;
@@ -11,7 +11,7 @@ class Icons {
   List<VectorSizes> vectorSizes;
   List<RasterSizes> rasterSizes;
 
-  Icons(
+  IconModel(
       {this.prices,
       this.iconId,
       this.categories,
@@ -24,42 +24,41 @@ class Icons {
       this.vectorSizes,
       this.rasterSizes});
 
-  Icons.fromJson(Map<String, dynamic> json) {
+  IconModel.fromJson(Map<String, dynamic> json) {
     iconId = json['icon_id'];
     if (json['categories'] != null) {
-      categories = new List<Categories>();
+      categories = [];
       json['categories'].forEach((v) {
-        categories.add(new Categories.fromJson(v));
+        categories.add(Categories.fromJson(v));
       });
     }
-    print("Icons 1");
+
     tags = json['tags'].cast<String>();
     type = json['type'];
     isIconGlyph = json['is_icon_glyph'];
     publishedAt = json['published_at'];
-    print("Icons 2");
+
     if (json['containers'] != null) {
-      containers = new List<Containers>();
+      containers = [];
       json['containers'].forEach((v) {
-        containers.add(new Containers.fromJson(v));
+        containers.add(Containers.fromJson(v));
       });
     }
-    print("Icons 4");
+
     isPremium = json['is_premium'];
     if (json['vector_sizes'] != null) {
-      vectorSizes = new List<VectorSizes>();
+      vectorSizes = [];
       json['vector_sizes'].forEach((v) {
-        vectorSizes.add(new VectorSizes.fromJson(v));
+        vectorSizes.add(VectorSizes.fromJson(v));
       });
     }
-    print("Icons 5");
+
     if (json['raster_sizes'] != null) {
-      rasterSizes = new List<RasterSizes>();
+      rasterSizes = [];
       json['raster_sizes'].forEach((v) {
-        rasterSizes.add(new RasterSizes.fromJson(v));
+        rasterSizes.add(RasterSizes.fromJson(v));
       });
     }
-    print("Icons 6");
   }
 }
 
@@ -92,7 +91,7 @@ class License {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['license_id'] = this.licenseId;
     data['scope'] = this.scope;
     data['url'] = this.url;
@@ -113,7 +112,7 @@ class Categories {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['name'] = this.name;
     data['identifier'] = this.identifier;
     return data;
@@ -132,7 +131,7 @@ class Containers {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['download_url'] = this.downloadUrl;
     data['format'] = this.format;
     return data;
@@ -149,9 +148,9 @@ class VectorSizes {
 
   VectorSizes.fromJson(Map<String, dynamic> json) {
     if (json['formats'] != null) {
-      formats = new List<Formats>();
+      formats = [];
       json['formats'].forEach((v) {
-        formats.add(new Formats.fromJson(v));
+        formats.add(Formats.fromJson(v));
       });
     }
     sizeWidth = json['size_width'];
@@ -160,7 +159,7 @@ class VectorSizes {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     if (this.formats != null) {
       data['formats'] = this.formats.map((v) => v.toJson()).toList();
     }
@@ -181,9 +180,9 @@ class RasterSizes {
 
   RasterSizes.fromJson(Map<String, dynamic> json) {
     if (json['formats'] != null) {
-      formats = new List<Formats>();
+      formats = [];
       json['formats'].forEach((v) {
-        formats.add(new Formats.fromJson(v));
+        formats.add(Formats.fromJson(v));
       });
     }
     sizeWidth = json['size_width'];
@@ -192,7 +191,7 @@ class RasterSizes {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     if (this.formats != null) {
       data['formats'] = this.formats.map((v) => v.toJson()).toList();
     }
@@ -217,7 +216,7 @@ class Formats {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['download_url'] = this.downloadUrl;
     data['format'] = this.format;
     data['preview_url'] = this.previewUrl;

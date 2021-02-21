@@ -1,45 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:iconfinder/view/pages/home_screen.dart';
-import 'package:iconfinder/view_model/category_respository.dart';
-import 'package:iconfinder/view_model/icon_set_repository.dart';
-import 'package:iconfinder/view_model/search_repository.dart';
+import 'package:iconfinder/view_model/category_notifier.dart';
+import 'package:iconfinder/view_model/icon_notifier.dart';
+import 'package:iconfinder/view_model/icon_set_notifier.dart';
+import 'package:iconfinder/view_model/search_notifier.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    precacheImage(const AssetImage('assets/images/loader_bike.gif'), context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<CatgeoryRepo>(
-            create: (_) => CatgeoryRepo(),
-          ),
-          ChangeNotifierProvider<IconSetRepository>(
-            create: (_) => IconSetRepository(),
-            lazy: false,
-          ),
-          ChangeNotifierProvider<SearchRepo>(
-            create: (_) => SearchRepo(),
-            lazy: false,
-          ),
-        ],
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          home: Consumer3<CatgeoryRepo, IconSetRepository, SearchRepo>(
-            builder: (context, CatgeoryRepo repo, IconSetRepository repository,
-                SearchRepo serachRepo, _) {
-              return HomeScreen();
-            },
-          ),
-        ));
+      providers: [
+        ChangeNotifierProvider<CategoryNotifier>(
+          create: (_) => CategoryNotifier(),
+        ),
+        ChangeNotifierProvider<IconSetNotifier>(
+          create: (_) => IconSetNotifier(),
+        ),
+        ChangeNotifierProvider<IconNotifier>(
+          create: (_) => IconNotifier(),
+        ),
+        ChangeNotifierProvider<SearchNotifier>(
+          create: (_) => SearchNotifier(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Square Boat Task',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'GoogleSans',
+          primaryColor: Colors.black,
+          accentColor: Colors.black,
+          primaryColorDark: Colors.black,
+          primaryColorLight: Colors.black,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: HomeScreen(),
+      ),
+    );
   }
 }

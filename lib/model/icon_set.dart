@@ -6,7 +6,7 @@ class Iconsets {
   String name;
   int iconsCount;
   List<Prices> prices;
-  List<Icons> icons;
+  List<IconModel> icons;
   List<Categories> categories;
   int iconsetId;
   String type;
@@ -35,31 +35,30 @@ class Iconsets {
     iconsCount = json['icons_count'];
 
     if (json['prices'] != null) {
-      prices = new List<Prices>();
+      prices = [];
       json['prices'].forEach((v) {
-        prices.add(new Prices.fromJson(v));
+        prices.add(Prices.fromJson(v));
       });
     }
-    //print("====1");
+
     if (json['icons'] != null) {
-      icons = new List<Icons>();
+      icons = [];
       json['icons'].forEach((v) {
-        icons.add(new Icons.fromJson(v));
+        icons.add(IconModel.fromJson(v));
       });
     } else {
       icons = null;
     }
     if (json['categories'] != null) {
-      categories = new List<Categories>();
+      categories = [];
       json['categories'].forEach((v) {
-        categories.add(new Categories.fromJson(v));
+        categories.add(Categories.fromJson(v));
       });
     }
     iconsetId = json['iconset_id'];
     type = json['type'];
     identifier = json['identifier'];
-    author =
-        json['author'] != null ? new Author.fromJson(json['author']) : null;
+    author = json['author'] != null ? Author.fromJson(json['author']) : null;
     publishedAt = json['published_at'];
     //print("====3");
   }

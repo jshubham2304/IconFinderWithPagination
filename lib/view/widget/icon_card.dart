@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class IconCard extends StatelessWidget {
@@ -18,8 +19,8 @@ class IconCard extends StatelessWidget {
           bottom: 8,
         ),
         padding: EdgeInsets.all(5),
-        height: MediaQuery.of(context).size.width,
-        width: MediaQuery.of(context).size.width,
+        height: 30,
+        width: 30,
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           color: Colors.white,
@@ -28,14 +29,16 @@ class IconCard extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-                height: MediaQuery.of(context).size.width,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    image: DecorationImage(
-                      image: NetworkImage(imageUrl),
-                      fit: BoxFit.fill,
-                    ))),
+              height: 30,
+              width: 30,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(imageUrl),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
             Positioned(
                 left: 0,
                 child: IconButton(

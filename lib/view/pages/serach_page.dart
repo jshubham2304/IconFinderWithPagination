@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:iconfinder/view_model/search_repository.dart';
+import 'package:iconfinder/enums/response_enums.dart';
+import 'package:iconfinder/utils/debouncer.dart';
+import 'package:iconfinder/view/pages/icon_screen.dart';
+import 'package:iconfinder/view/widget/common_widgets.dart';
+import 'package:iconfinder/view/widget/icon_card.dart';
+import 'package:iconfinder/view_model/category_notifier.dart';
+import 'package:iconfinder/view_model/search_notifier.dart';
 import 'package:provider/provider.dart';
-import 'package:iconfinder/view/widget/icon_card.dart' as uiCategory;
-import 'package:toast/toast.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -10,120 +14,143 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  ScrollController _scrollController = new ScrollController();
-  bool isLoading = false;
-  SearchRepo repo;
+  final ScrollController _scrollController = ScrollController();
+
+  SearchNotifier _notifier;
+  final TextEditingController _searchCtrl = TextEditingController();
+  final _debouncer = Debouncer(milliseconds: 300);
+
+  var count = 1;
+
   @override
   void initState() {
     super.initState();
-    repo = Provider.of<SearchRepo>(context, listen: false);
-
-    repo.addListener(_addListiner);
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        repo.getNextPageSearchingIcon();
-      }
-    });
-  }
-
-  _addListiner() {
-    if (repo.message != '') {
-      Toast.show(repo.message, context, duration: 2);
-    }
+    _notifier = Provider.of<SearchNotifier>(context, listen: false);
+    _scrollController.addListener(_scrollListener);
   }
 
   @override
-  void dispose() {
-    repo.removeListener(_addListiner);
-    super.dispose();
-  }
-
-  Widget _buildProgressIndicator() {
-    return new Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: new Center(
-        child: Flexible(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Icons Loading...",
-                style: TextStyle(
-                  fontSize: 12,
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Container(
+            height: 56,
+            child: TextFormField(
+              autofocus: true,
+              cursorColor: Colors.white,
+              controller: _searchCtrl,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Search Icons',
+                hintStyle: TextStyle(
+                  color: Colors.white38,
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(child: CircularProgressIndicator()),
-            ],
+              onChanged: (val) => _debouncer.run(() => _getSearchData()),
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
           ),
+        ),
+        body: Selector<CategoryNotifier, ResponseStatus>(
+          selector: (_, model) => model.status,
+          shouldRebuild: (_, __) => true,
+          builder: (_, data, __) {
+            print(data.toString());
+            switch (data) {
+              case ResponseStatus.NONE:
+                return renderEmptySearchState();
+                break;
+              case ResponseStatus.NOINTERNET:
+                return noInternet(_getSearchData);
+                break;
+              case ResponseStatus.ERROR:
+                return errorWidget(_getSearchData);
+                break;
+              case ResponseStatus.PROCESSING:
+                return appLoader(
+                  'Wait we\'ll quickly bring your search results to you.',
+                );
+                break;
+              case ResponseStatus.NOTFOUND:
+                return noDataFound();
+                break;
+
+              case ResponseStatus.FOUND:
+                return _renderListView();
+                break;
+
+              default:
+                return appLoader(
+                  'Wait we\'ll quickly bring your categories to you.',
+                );
+            }
+          },
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Container(
-            height: 46,
-            child: TextField(
-              autofocus: true,
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Search Icons',
-                  hintStyle: TextStyle(color: Colors.white38)),
-              onChanged: repo.searchingIcon,
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ),
-        body: SafeArea(child: _buildListView()));
+  Widget _renderListView() {
+    return ListView.separated(
+      shrinkWrap: true,
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(),
+      separatorBuilder: (_, __) => SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        if (index == _notifier?.iconsList?.length ?? 0) {
+          if (index >= _notifier.totalCount &&
+              (_searchCtrl?.text?.isNotEmpty ?? false)) {
+            return Image(
+              image: const AssetImage('assets/images/end.png'),
+              height: 100,
+            );
+          }
+          if ((_notifier?.iconsList?.isNotEmpty ?? false) &&
+              (_searchCtrl?.text?.isNotEmpty ?? false)) {
+            return Center(child: buildProgressIndicator());
+          } else {
+            return Center(child: renderEmptySearchState());
+          }
+        } else {
+          return IconCard(
+            imageUrl: _notifier
+                .iconsList[index]?.rasterSizes?.last?.formats?.last?.previewUrl,
+            onclick: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => IconScreen(
+                    icon: _notifier.iconsList[index],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+      itemCount: (_notifier?.iconsList?.length ?? 0) + 1,
+    );
   }
 
-  Widget _buildListView() {
-    return Consumer<SearchRepo>(builder: (context, SearchRepo repo, _) {
-      if (repo.searchValue == null || repo.searchValue.length == 0) {
-        return Center(
-          child: Container(
-            child: Text('Please enter value on search bar'),
-          ),
-        );
-      }
-      if (repo.icons != null && repo.icons.length != 0) {
-        return GridView.builder(
-          controller: _scrollController,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              childAspectRatio: 1.3,
-              crossAxisCount: 2,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5),
-          itemBuilder: (context, index) {
-            if (index == repo.icons.length) {
-              return Center(child: _buildProgressIndicator());
-            } else {
-              return uiCategory.IconCard(
-                imageUrl:
-                    repo.icons[index].rasterSizes[6].formats[0].previewUrl,
-                name: '',
-                onclick: () {
-                  repo.downloadIcon(
-                      repo.icons[index].rasterSizes[6].formats[0].previewUrl,
-                      repo.icons[index].iconId.toString());
-                },
-              );
-            }
-          },
-          itemCount: repo.icons.length + 1,
-        );
-      } else {
-        return Center(child: _buildProgressIndicator());
-      }
-    });
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _notifier.getNextPageSearchingIcon(_searchCtrl.text, count);
+    }
+  }
+
+  Future<void> _getSearchData() async {
+    if (_searchCtrl?.text != null) {
+      _notifier.getSearchData(_searchCtrl.text);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController?.removeListener(_scrollListener);
+    _scrollController?.dispose();
+    super.dispose();
   }
 }

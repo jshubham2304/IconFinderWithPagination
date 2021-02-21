@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:iconfinder/enums/response_enums.dart';
-import 'package:iconfinder/model/category.dart';
-import 'package:iconfinder/view/pages/icon_list_screen.dart';
-import 'package:iconfinder/view/widget/Icon_set_card.dart';
+import 'package:iconfinder/model/icon_set.dart';
+import 'package:iconfinder/view/pages/icon_screen.dart';
 import 'package:iconfinder/view/widget/common_widgets.dart';
+import 'package:iconfinder/view_model/icon_notifier.dart';
 import 'package:iconfinder/view_model/icon_set_notifier.dart';
 import 'package:provider/provider.dart';
 
-class IconSetScreen extends StatefulWidget {
-  final Category category;
+class IconListScreen extends StatefulWidget {
+  final Iconsets iconset;
 
-  IconSetScreen({this.category});
+  IconListScreen({this.iconset});
 
   @override
-  _IconSetScreenState createState() => _IconSetScreenState();
+  _IconListScreenState createState() => _IconListScreenState();
 }
 
-class _IconSetScreenState extends State<IconSetScreen> {
+class _IconListScreenState extends State<IconListScreen> {
   ScrollController _scrollController = ScrollController();
 
   bool isLoading = false;
 
-  IconSetNotifier _notifier;
+  IconNotifier _notifier;
+
+  var count = 1;
 
   @override
   void initState() {
     super.initState();
-    _notifier = Provider.of<IconSetNotifier>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getIconSetData());
+    _notifier = Provider.of<IconNotifier>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getIconData());
 
     _scrollController.addListener(_scrollListener);
   }
@@ -38,7 +40,7 @@ class _IconSetScreenState extends State<IconSetScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('${widget.category.name}'),
+          title: Text('${widget.iconset.name}'),
         ),
         body: Selector<IconSetNotifier, ResponseStatus>(
           selector: (_, model) => model.status,
@@ -46,14 +48,14 @@ class _IconSetScreenState extends State<IconSetScreen> {
           builder: (_, data, __) {
             switch (data) {
               case ResponseStatus.NOINTERNET:
-                return noInternet(_getIconSetData);
+                return noInternet(_getIconData);
                 break;
               case ResponseStatus.ERROR:
-                return errorWidget(_getIconSetData);
+                return errorWidget(_getIconData);
                 break;
               case ResponseStatus.PROCESSING:
                 return appLoader(
-                  'Wait we\'ll quickly bring your ${widget.category.name} icons to you.',
+                  'Wait we\'ll quickly bring your ${widget.iconset.name} icons to you.',
                 );
                 break;
               case ResponseStatus.NOTFOUND:
@@ -64,7 +66,7 @@ class _IconSetScreenState extends State<IconSetScreen> {
                 break;
               default:
                 return appLoader(
-                  'Wait we\'ll quickly bring your ${widget.category.name} icons to you.',
+                  'Wait we\'ll quickly bring your ${widget.iconset.name} icons to you.',
                 );
             }
           },
@@ -81,7 +83,7 @@ class _IconSetScreenState extends State<IconSetScreen> {
       shrinkWrap: true,
       separatorBuilder: (_, __) => SizedBox(height: 12),
       itemBuilder: (context, index) {
-        if (index == _notifier?.iconSets?.length ?? 0) {
+        if (index == _notifier?.iconList?.length ?? 0) {
           if (index >= _notifier.totalCount) {
             return Image(
               image: const AssetImage('assets/images/end.png'),
@@ -90,40 +92,39 @@ class _IconSetScreenState extends State<IconSetScreen> {
           }
           return Center(child: buildProgressIndicator());
         } else {
-          return IconSetCard(
-            imageUrl: 'https://picsum.photos/id/${100 + index}/600/100?blur',
-            name: _notifier.iconSets[index].name +
-                '  (${_notifier.iconSets[index].iconsCount})',
-            icon: _notifier.iconSets[index],
-            onclick: () {
+          // TODO: add icon ui here
+          return InkWell(
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => IconListScreen(
-                    iconset: _notifier.iconSets[index],
+                  builder: (context) => IconScreen(
+                    icon: _notifier?.iconList[index],
                   ),
                 ),
               );
             },
+            child: Text(
+              _notifier.iconList[index].iconId.toString(),
+            ),
           );
         }
       },
-      itemCount: (_notifier?.iconSets?.length ?? 0) + 1,
+      itemCount: (_notifier?.iconList?.length ?? 0) + 1,
     );
   }
 
   void _scrollListener() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      _notifier.getMoreIconSetData(
-        widget.category.identifier,
-        _notifier.iconSets.last,
-      );
+      // TODO: check this count if it is working correct or not
+      _notifier.getMoreIconData(widget.iconset.identifier, count);
+      count++;
     }
   }
 
-  Future<void> _getIconSetData() async {
-    await _notifier.getIconSetData(widget.category.identifier);
+  Future<void> _getIconData() async {
+    await _notifier.getIconData(widget.iconset.identifier);
   }
 
   @override
