@@ -4,7 +4,6 @@ import 'package:iconfinder/utils/debouncer.dart';
 import 'package:iconfinder/view/pages/icon_screen.dart';
 import 'package:iconfinder/view/widget/common_widgets.dart';
 import 'package:iconfinder/view/widget/icon_card.dart';
-import 'package:iconfinder/view_model/category_notifier.dart';
 import 'package:iconfinder/view_model/search_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +16,16 @@ class _SearchScreenState extends State<SearchScreen> {
   final ScrollController _scrollController = ScrollController();
 
   SearchNotifier _notifier;
-  final TextEditingController _searchCtrl = TextEditingController();
+  final TextEditingController _searchCtrl = TextEditingController(text: '');
   final _debouncer = Debouncer(milliseconds: 300);
 
-  var count = 1;
+  var count = 20;
 
   @override
   void initState() {
     super.initState();
     _notifier = Provider.of<SearchNotifier>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getSearchData());
     _scrollController.addListener(_scrollListener);
   }
 
@@ -53,7 +53,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
         ),
-        body: Selector<CategoryNotifier, ResponseStatus>(
+        body: Selector<SearchNotifier, ResponseStatus>(
           selector: (_, model) => model.status,
           shouldRebuild: (_, __) => true,
           builder: (_, data, __) {
@@ -96,6 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return ListView.separated(
       shrinkWrap: true,
       controller: _scrollController,
+      padding: EdgeInsets.symmetric(vertical: 16),
       physics: const BouncingScrollPhysics(),
       separatorBuilder: (_, __) => SizedBox(height: 12),
       itemBuilder: (context, index) {
@@ -117,6 +118,7 @@ class _SearchScreenState extends State<SearchScreen> {
           return IconCard(
             imageUrl: _notifier
                 .iconsList[index]?.rasterSizes?.last?.formats?.last?.previewUrl,
+            name: _notifier.iconsList[index]?.iconId?.toString() ?? 'Icon',
             onclick: () {
               Navigator.push(
                 context,
@@ -138,6 +140,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       _notifier.getNextPageSearchingIcon(_searchCtrl.text, count);
+      count = count + 10;
     }
   }
 

@@ -23,7 +23,7 @@ class _IconListScreenState extends State<IconListScreen> {
 
   IconNotifier _notifier;
 
-  var count = 1;
+  var count = 20;
 
   @override
   void initState() {
@@ -119,7 +119,7 @@ class _IconListScreenState extends State<IconListScreen> {
         _scrollController.position.maxScrollExtent) {
       // TODO: check this count if it is working correct or not
       _notifier.getMoreIconData(widget.iconset.identifier, count);
-      count++;
+      count = count + 10;
     }
   }
 

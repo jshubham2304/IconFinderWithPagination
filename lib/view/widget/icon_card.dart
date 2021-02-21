@@ -10,43 +10,32 @@ class IconCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return ListTile(
       onTap: onclick,
-      child: Container(
-        margin: EdgeInsets.only(
-          left: 5,
-          right: 5,
-          bottom: 8,
-        ),
-        padding: EdgeInsets.all(5),
-        height: 30,
-        width: 30,
+      leading: Container(
+        height: 56,
+        width: 56,
         decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(60),
+          border: Border.all(
+            width: 1,
+            color: Colors.black,
+          ),
         ),
-        child: Stack(
-          children: [
-            Container(
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(imageUrl),
-                  fit: BoxFit.fill,
-                ),
-              ),
+        padding: EdgeInsets.all(12),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          errorWidget: (_, __, ___) => Center(
+            child: Text(
+              'NA',
+              style: TextStyle(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
-            Positioned(
-                left: 0,
-                child: IconButton(
-                    icon: Icon(Icons.download_rounded, color: Colors.red),
-                    onPressed: onclick)),
-          ],
+          ),
         ),
       ),
+      title: Text(name),
+      trailing: Text('→'),
     );
   }
 }

@@ -70,28 +70,24 @@ Widget errorWidget(Function onTap) {
 }
 
 Widget appLoader(String text) {
-  return Padding(
+  return ListView(
+    shrinkWrap: true,
     padding: const EdgeInsets.all(8.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Image(
-          image: const AssetImage('assets/images/loader_bike.gif'),
+    children: [
+      Image(
+        image: const AssetImage('assets/images/loader_bike.gif'),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Text(
+        text ?? 'Wait we\'ll quickly bring your icons to you.',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
-        SizedBox(
-          height: 16,
-        ),
-        Text(
-          text ?? 'Wait we\'ll quickly bring your icons to you.',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    ),
+        textAlign: TextAlign.center,
+      ),
+    ],
   );
 }
 
@@ -107,7 +103,7 @@ Widget buildProgressIndicator() {
 }
 
 Widget renderEmptySearchState() {
-  return Column(
+  return ListView(
     children: [
       Image(
         image: const AssetImage('assets/images/waiting.gif'),

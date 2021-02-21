@@ -88,7 +88,7 @@ abstract class ApiService {
     return responseJson;
   }
 
-  static Future<dynamic> searchIcon(String key, {int nextPage = 0}) async {
+  static Future<dynamic> searchIcon(String key, {int nextPage = 10}) async {
     dynamic responseJson;
     try {
       final response = await http.get(

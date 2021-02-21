@@ -64,7 +64,6 @@ class SearchNotifier extends ChangeNotifier {
         status = ResponseStatus.NONE;
       } else {
         status = ResponseStatus.PROCESSING;
-        notifyListeners();
 
         var resp = await ApiService.searchIcon(text, nextPage: nextPage);
         print(resp.toString());
