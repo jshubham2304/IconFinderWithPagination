@@ -42,7 +42,11 @@ class _SearchScreenState extends State<SearchScreen> {
               cursorColor: Colors.white,
               controller: _searchCtrl,
               decoration: InputDecoration(
-                border: InputBorder.none,
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
                 hintText: 'Search Icons',
                 hintStyle: TextStyle(
                   color: Colors.white38,

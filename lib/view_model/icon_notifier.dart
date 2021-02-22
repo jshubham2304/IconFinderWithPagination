@@ -22,8 +22,8 @@ class IconNotifier extends ChangeNotifier {
       var resp = await ApiService.getIcon(id);
 
       if (resp != null) {
-        print(resp);
         var data = resp['icons'] as List ?? [];
+
         totalCount = resp['total_count'] as int ?? 0;
 
         iconList = data.map<IconModel>((e) => IconModel.fromJson(e)).toList();

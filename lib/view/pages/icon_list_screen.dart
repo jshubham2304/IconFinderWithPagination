@@ -19,13 +19,13 @@ class IconListScreen extends StatefulWidget {
 }
 
 class _IconListScreenState extends State<IconListScreen> {
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   bool isLoading = false;
 
   IconNotifier _notifier;
 
-  var count = 0;
+  var count = 10;
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _IconListScreenState extends State<IconListScreen> {
         appBar: AppBar(
           title: Text('${widget.iconset.name}'),
         ),
-        body: Selector<IconSetNotifier, ResponseStatus>(
+        body: Selector<IconNotifier, ResponseStatus>(
           selector: (_, model) => model.status,
           shouldRebuild: (_, __) => true,
           builder: (_, data, __) {
@@ -131,9 +131,10 @@ class _IconListScreenState extends State<IconListScreen> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       // TODO: check this count if it is working correct or not
-      count++;
-      print(count);
-      await _notifier.getMoreIconData(widget.iconset.identifier, count);
+      if ((_notifier?.iconList?.length ?? 0) < _notifier.totalCount) {
+        _notifier.getMoreIconData(widget.iconset.identifier, count);
+      }
+      count = count + 10;
     }
   }
 
