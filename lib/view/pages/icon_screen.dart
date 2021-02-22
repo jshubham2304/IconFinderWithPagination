@@ -17,6 +17,7 @@ class _IconScreenState extends State<IconScreen> {
   bool isRasterSizes = true;
   List<bool> selectedType = [true, false];
   int selectedSize;
+  RasterSizes selectedRasterSize;
   SearchNotifier searchNotifier;
   @override
   void initState() {
@@ -24,18 +25,19 @@ class _IconScreenState extends State<IconScreen> {
     searchNotifier = Provider.of<SearchNotifier>(context, listen: false);
     searchNotifier.addListener(_addListiner);
     selectedSize = widget.icon.rasterSizes.first.size;
+    selectedRasterSize = widget.icon.rasterSizes.first;
   }
 
   _addListiner() {
     if (searchNotifier.message != '') {
-      Toast.show(searchNotifier.message, context);
+      Toast.show(searchNotifier.message, context,
+          border: Border.all(color: Colors.red, width: 2), gravity: 1);
       searchNotifier.message = '';
     }
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     searchNotifier.removeListener(_addListiner);
     super.dispose();
   }
@@ -144,6 +146,7 @@ class _IconScreenState extends State<IconScreen> {
                       onTap: () {
                         setState(() {
                           selectedSize = widget.icon.rasterSizes[index].size;
+                          selectedRasterSize = widget.icon.rasterSizes[index];
                         });
                       },
                       child: Container(
@@ -231,9 +234,14 @@ class _IconScreenState extends State<IconScreen> {
   Widget _renderDownloadButton() {
     return InkWell(
       onTap: () {
-        searchNotifier.downloadIcon(
-            widget.icon.rasterSizes.last.formats.first.previewUrl,
-            widget.icon.iconId.toString());
+        if (selectedType[0]) {
+          searchNotifier.downloadIcon(
+              selectedRasterSize.formats.first.previewUrl,
+              widget.icon.iconId.toString());
+        } else {
+          Toast.show('Please try again , Something went wrong', context,
+              gravity: 1);
+        }
       },
       child: Container(
         decoration: BoxDecoration(
