@@ -77,15 +77,12 @@ class SearchNotifier extends ChangeNotifier {
           status = ResponseStatus.FOUND;
         } else {
           status = ResponseStatus.NOTFOUND;
-          iconsList.clear();
         }
       }
     } on SocketException {
       status = ResponseStatus.NOINTERNET;
-      iconsList.clear();
     } catch (e) {
       status = ResponseStatus.ERROR;
-      iconsList.clear();
     } finally {
       notifyListeners();
     }

@@ -42,11 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
               cursorColor: Colors.white,
               controller: _searchCtrl,
               decoration: InputDecoration(
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
+                border: InputBorder.none,
                 hintText: 'Search Icons',
                 hintStyle: TextStyle(
                   color: Colors.white38,
@@ -61,7 +57,6 @@ class _SearchScreenState extends State<SearchScreen> {
           selector: (_, model) => model.status,
           shouldRebuild: (_, __) => true,
           builder: (_, data, __) {
-            print(data.toString());
             switch (data) {
               case ResponseStatus.NONE:
                 return renderEmptySearchState();
