@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconfinder/model/icon.dart';
+import 'package:iconfinder/view_model/search_notifier.dart';
+import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 class IconScreen extends StatefulWidget {
   final IconModel icon;
@@ -14,11 +17,27 @@ class _IconScreenState extends State<IconScreen> {
   bool isRasterSizes = true;
   List<bool> selectedType = [true, false];
   int selectedSize;
-
+  SearchNotifier searchNotifier;
   @override
   void initState() {
     super.initState();
+    searchNotifier = Provider.of<SearchNotifier>(context, listen: false);
+    searchNotifier.addListener(_addListiner);
     selectedSize = widget.icon.rasterSizes.first.size;
+  }
+
+  _addListiner() {
+    if (searchNotifier.message != '') {
+      Toast.show(searchNotifier.message, context);
+      searchNotifier.message = '';
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    searchNotifier.removeListener(_addListiner);
+    super.dispose();
   }
 
   @override

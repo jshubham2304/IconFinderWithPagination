@@ -5,12 +5,13 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:iconfinder/api/api_service.dart';
 import 'package:iconfinder/enums/response_enums.dart';
 import 'package:iconfinder/model/icon.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SearchNotifier extends ChangeNotifier {
   List<IconModel> iconsList = [];
 
   int totalCount = 0;
-
+  String message = '';
   ResponseStatus status = ResponseStatus.NONE;
 
   void getSearchData(String val) async {
@@ -44,14 +45,15 @@ class SearchNotifier extends ChangeNotifier {
   }
 
   void downloadIcon(String url, String name) async {
-    // message = 'Downloading Icons';
+    requestPermission();
+    message = 'Downloading Icons';
     notifyListeners();
 
     GallerySaver.saveImage(url).then((bool success) {
       if (success) {
-        // message = 'Icon Saved';
+        message = 'Icon Downloaded ';
       } else {
-        // message = 'Icon is not saved';
+        message = 'Please try again to download the icon.';
       }
       notifyListeners();
     });
@@ -87,12 +89,12 @@ class SearchNotifier extends ChangeNotifier {
     }
   }
 
-  // requestPermission() async {
-  //   Map<Permission, PermissionStatus> statuses = await [
-  //     Permission.storage,
-  //   ].request();
+  requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
 
-  //   final info = statuses[Permission.storage].toString();
-  //   print(info);
-  // }
+    final info = statuses[Permission.storage].toString();
+    print(info);
+  }
 }
