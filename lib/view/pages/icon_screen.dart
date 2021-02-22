@@ -231,7 +231,6 @@ class _IconScreenState extends State<IconScreen> {
   Widget _renderDownloadButton() {
     return InkWell(
       onTap: () {
-        // TODO: download the image
         searchNotifier.downloadIcon(
             widget.icon.rasterSizes.last.formats.first.previewUrl,
             widget.icon.iconId.toString());
