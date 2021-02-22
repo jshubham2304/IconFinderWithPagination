@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iconfinder/enums/response_enums.dart';
 import 'package:iconfinder/model/icon_set.dart';
 import 'package:iconfinder/view/pages/icon_screen.dart';
+import 'package:iconfinder/view/widget/Icon_set_card.dart';
 import 'package:iconfinder/view/widget/common_widgets.dart';
+import 'package:iconfinder/view/widget/icon_card.dart';
 import 'package:iconfinder/view_model/icon_notifier.dart';
 import 'package:iconfinder/view_model/icon_set_notifier.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +25,7 @@ class _IconListScreenState extends State<IconListScreen> {
 
   IconNotifier _notifier;
 
-  var count = 20;
+  var count = 0;
 
   @override
   void initState() {
@@ -92,7 +94,6 @@ class _IconListScreenState extends State<IconListScreen> {
           }
           return Center(child: buildProgressIndicator());
         } else {
-          // TODO: add icon ui here
           return InkWell(
             onTap: () {
               Navigator.push(
@@ -104,8 +105,20 @@ class _IconListScreenState extends State<IconListScreen> {
                 ),
               );
             },
-            child: Text(
-              _notifier.iconList[index].iconId.toString(),
+            child: IconCard(
+              imageUrl: _notifier
+                  .iconList[index].rasterSizes.last.formats.first.previewUrl,
+              name: '${_notifier.iconList[index].iconId} ',
+              onclick: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IconScreen(
+                      icon: _notifier?.iconList[index],
+                    ),
+                  ),
+                );
+              },
             ),
           );
         }
@@ -114,12 +127,13 @@ class _IconListScreenState extends State<IconListScreen> {
     );
   }
 
-  void _scrollListener() {
+  Future<void> _scrollListener() async {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       // TODO: check this count if it is working correct or not
-      _notifier.getMoreIconData(widget.iconset.identifier, count);
-      count = count + 10;
+      count++;
+      print(count);
+      await _notifier.getMoreIconData(widget.iconset.identifier, count);
     }
   }
 

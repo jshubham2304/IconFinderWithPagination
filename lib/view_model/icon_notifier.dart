@@ -15,6 +15,7 @@ class IconNotifier extends ChangeNotifier {
 
   Future<ApiResponseModel> getIconData(String id) async {
     try {
+      iconList.clear();
       status = ResponseStatus.PROCESSING;
       notifyListeners();
 
@@ -59,12 +60,11 @@ class IconNotifier extends ChangeNotifier {
   void getMoreIconData(String id, int nextPage) async {
     try {
       var resp = await ApiService.getIcon(id, nextPage: nextPage);
-
+      print(resp);
       status = ResponseStatus.PROCESSING;
 
       if (resp != null) {
-        var data = resp['categories'] as List ?? [];
-
+        var data = resp['icons'] as List;
         iconList
             .addAll(data.map<IconModel>((e) => IconModel.fromJson(e)).toList());
 

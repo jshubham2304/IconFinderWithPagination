@@ -71,6 +71,12 @@ abstract class ApiService {
   static Future<dynamic> getIcon(String id, {int nextPage = 0}) async {
     dynamic responseJson;
     try {
+      print(ApiUrls.iconEndPoint +
+          '/' +
+          id +
+          ApiUrls.iconMainEndPoint +
+          ApiUrls.count10 +
+          '${nextPage != 0 ? '&offset=' + nextPage.toString() : ''}'.trim());
       final response = await http.get(
         ApiUrls.baseUrls +
             ApiUrls.iconEndPoint +
@@ -81,6 +87,7 @@ abstract class ApiService {
             '${nextPage != 0 ? '&offset=' + nextPage.toString() : ''}'.trim(),
         headers: header,
       );
+      print(response.body);
       responseJson = ResponseHandler.returnResponse(response);
     } catch (e) {
       rethrow;
@@ -88,7 +95,7 @@ abstract class ApiService {
     return responseJson;
   }
 
-  static Future<dynamic> searchIcon(String key, {int nextPage = 10}) async {
+  static Future<dynamic> searchIcon(String key, {int nextPage = 0}) async {
     dynamic responseJson;
     try {
       final response = await http.get(
